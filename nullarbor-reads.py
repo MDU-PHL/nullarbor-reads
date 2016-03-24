@@ -351,20 +351,30 @@ class SearchReads():
 @click.option("--seq_path", default = ".", help = "Path to sequence reads (default = '.')")
 @click.option("--idfile", default = None, help = "File with sequence IDs")
 @click.option("--col_number", default = 1, help = "If idfile has more than one column, which column has the sequence IDs")
-@click.option("--header_true", is_flag = True, help = "If idfile has a header row")
 @click.option("--alt_extension", default = None, help = "If sequence files don't have one of the following extensions: fastq, fq, fastq.gz, fq.gz, specify alternate extension. Search will add this extension to the default ones, so mixed extensions is allowed (e.g., 'txt' ).")
 @click.option("--id_pattern", default = None, help = "If searching by folder rather than using sequence ID file, what is the regex pattern to identify the ID from a file name.")
 @click.option("--level", default = 1, help = "How many subdirectory levels to go down searching for read files (default = '1')")
 @click.option("--exclude", multiple = True, default = None, help = "Any text that can be used to exclude unwanted reads (e.g., from a particular subdirectory, or with a particular pattern. Can be used multiple times (e.g., --exclude subdir1 --exclude old))")
-@click.option("--verbose", is_flag = True, help = "Be verbose.")
+@click.option("--read1_pat", multiple = True, default = None, help = "Add read pattern search for read 1 (default = 'R1')")
+@click.option("--read2_pat", multiple = True, default = None, help = "Add read pattern search for read 2 (default = 'R2')")
+@click.option("--header_true", is_flag = True, help = "If idfile has a header row")
 @click.option("--is_SE", is_flag = True, help = "For future compatibility with Nullarbor accepting single-end reads (default PE reads)")
+@click.option("--verbose", is_flag = True, help = "Be verbose.")
+@click.version_option(version = 0.1, message = 'nullarbor-reads version 0.1')
 @click.argument("OUTFILE")
-def nullarbor_reads(seq_path, idfile, col_number, alt_extension, id_pattern, header_true, level, exclude, verbose, is_se, outfile):
+def nullarbor_reads(seq_path, idfile, col_number, alt_extension, id_pattern, header_true, level, exclude, verbose, is_se, outfile, read1_pat, read2_pat):
     '''
     This is the main function
     '''
-    read1_pat = ('R1',)
-    read2_pat = ('R2',)
+    if( read1_pat != None ):
+        read1_pat = read1_pat + ('R1',)
+    else:
+        read1_pat = ('R1',)
+    if( read2_pat != None ):
+        read2_pat = read2_pat + ('R2',)
+    else:
+        read2_pat = ('R2',)
+
     new_search = SearchReads( exclude, alt_extension, verbose )
     if( idfile != None ):
         if( verbose ):
